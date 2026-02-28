@@ -1,0 +1,1349 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CipherLab – Kalkulator Kriptografi Klasik</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0e1a;
+        --bg2: #0f1628;
+        --panel: #111827;
+        --panel2: #1a2235;
+        --border: #1e2d47;
+        --accent: #00d4ff;
+        --accent2: #7c3aed;
+        --accent3: #10b981;
+        --warn: #f59e0b;
+        --text: #e2e8f0;
+        --text2: #94a3b8;
+        --text3: #64748b;
+        --red: #ef4444;
+        --glow: 0 0 20px rgba(0, 212, 255, 0.3);
+        --glow2: 0 0 20px rgba(124, 58, 237, 0.3);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Exo 2", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Grid background */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .container {
+        position: relative;
+        z-index: 1;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 30px 20px;
+      }
+
+      /* Header */
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeDown 0.6s ease;
+      }
+      .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+      .logo-icon {
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        box-shadow: var(--glow);
+      }
+      h1 {
+        font-family: "Rajdhani", sans-serif;
+        font-size: 2.4rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: 2px;
+      }
+      .subtitle {
+        color: var(--text2);
+        font-size: 0.9rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        font-weight: 300;
+      }
+
+      /* Main layout */
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      /* Cards */
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 24px;
+        animation: fadeUp 0.5s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        opacity: 0.6;
+      }
+      .card.full {
+        grid-column: 1 / -1;
+      }
+      .card.accent-green::before {
+        background: linear-gradient(90deg, var(--accent3), var(--accent));
+      }
+      .card.accent-purple::before {
+        background: linear-gradient(90deg, var(--accent2), var(--red));
+      }
+
+      .card-title {
+        font-family: "Rajdhani", sans-serif;
+        font-size: 0.75rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card-title .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        animation: pulse 2s infinite;
+      }
+
+      /* Form controls */
+      label {
+        display: block;
+        font-size: 0.75rem;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--text3);
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+
+      textarea,
+      input[type="text"],
+      select {
+        width: 100%;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        padding: 12px 14px;
+        font-family: "Exo 2", sans-serif;
+        font-size: 0.95rem;
+        margin-bottom: 16px;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        outline: none;
+        appearance: none;
+      }
+      textarea {
+        font-family: "Share Tech Mono", monospace;
+        font-size: 0.9rem;
+        resize: vertical;
+        min-height: 110px;
+        letter-spacing: 1px;
+      }
+      textarea:focus,
+      input:focus,
+      select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+      }
+      select {
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='%2394a3b8'%3E%3Cpath d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 36px;
+      }
+      option {
+        background: var(--panel);
+      }
+
+      /* Mode toggle */
+      .mode-toggle {
+        display: flex;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 4px;
+        margin-bottom: 16px;
+        gap: 4px;
+      }
+      .mode-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: "Rajdhani", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: all 0.2s;
+        background: transparent;
+        color: var(--text3);
+      }
+      .mode-btn.active-enc {
+        background: linear-gradient(135deg, var(--accent2), #4f46e5);
+        color: white;
+        box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
+      }
+      .mode-btn.active-dec {
+        background: linear-gradient(135deg, var(--accent3), #059669);
+        color: white;
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+      }
+
+      /* Main action button */
+      .btn-process {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: white;
+        font-family: "Rajdhani", sans-serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: var(--glow);
+        margin-bottom: 16px;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-process:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+      }
+      .btn-process:active {
+        transform: translateY(0);
+      }
+      .btn-process::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -60%;
+        width: 40%;
+        height: 200%;
+        background: rgba(255, 255, 255, 0.15);
+        transform: skewX(-20deg);
+        transition: left 0.4s;
+      }
+      .btn-process:hover::after {
+        left: 120%;
+      }
+
+      /* Result area */
+      .result-box {
+        position: relative;
+        margin-bottom: 16px;
+      }
+      #result {
+        background: var(--bg2);
+        border: 1px solid var(--accent3);
+        border-radius: 8px;
+        color: var(--accent3);
+        font-family: "Share Tech Mono", monospace;
+        font-size: 1rem;
+        letter-spacing: 2px;
+        padding: 14px;
+        width: 100%;
+        min-height: 90px;
+        resize: none;
+        outline: none;
+        transition: border-color 0.2s;
+        word-break: break-all;
+      }
+      .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--panel2);
+        border: 1px solid var(--border);
+        color: var(--text2);
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 0.7rem;
+        cursor: pointer;
+        font-family: "Rajdhani", sans-serif;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: all 0.2s;
+      }
+      .copy-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      /* Info / explanation panel */
+      .info-panel {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px;
+        font-size: 0.82rem;
+        color: var(--text2);
+        line-height: 1.7;
+        margin-top: 8px;
+      }
+      .info-panel strong {
+        color: var(--accent);
+        font-family: "Share Tech Mono", monospace;
+      }
+      .info-panel .step {
+        margin-bottom: 4px;
+        color: var(--text2);
+      }
+      .info-panel .step span {
+        color: var(--accent);
+        font-family: "Share Tech Mono", monospace;
+        font-size: 0.85rem;
+      }
+
+      /* Key helper */
+      .key-hint {
+        font-size: 0.75rem;
+        color: var(--warn);
+        margin-top: -12px;
+        margin-bottom: 12px;
+        display: none;
+      }
+      .key-hint.show {
+        display: block;
+      }
+
+      /* Stats bar */
+      .stats {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .stat {
+        flex: 1;
+        min-width: 80px;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 14px;
+        text-align: center;
+      }
+      .stat-val {
+        font-family: "Share Tech Mono", monospace;
+        font-size: 1.4rem;
+        color: var(--accent);
+        display: block;
+      }
+      .stat-lbl {
+        font-size: 0.65rem;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--text3);
+      }
+
+      /* Frequency analysis */
+      .freq-bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 3px;
+        height: 80px;
+        margin-top: 10px;
+        padding: 0 4px;
+      }
+      .freq-bar-wrap {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+        justify-content: flex-end;
+      }
+      .freq-bar {
+        width: 100%;
+        background: linear-gradient(0deg, var(--accent2), var(--accent));
+        border-radius: 2px 2px 0 0;
+        transition: height 0.4s ease;
+        min-height: 2px;
+      }
+      .freq-lbl {
+        font-family: "Share Tech Mono", monospace;
+        font-size: 0.55rem;
+        color: var(--text3);
+        margin-top: 3px;
+      }
+
+      /* Alerts */
+      .alert {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 0.83rem;
+        margin-bottom: 12px;
+        display: none;
+      }
+      .alert.show {
+        display: block;
+      }
+      .alert-err {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: var(--red);
+      }
+      .alert-ok {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: var(--accent3);
+      }
+
+      /* Cipher key display */
+      .key-display {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 8px;
+      }
+      .key-cell {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-family: "Share Tech Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--accent);
+      }
+
+      /* Playfair grid */
+      .pf-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 3px;
+        margin-top: 10px;
+      }
+      .pf-cell {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        text-align: center;
+        padding: 6px 4px;
+        font-family: "Share Tech Mono", monospace;
+        font-size: 0.85rem;
+        color: var(--text);
+      }
+      .pf-cell.highlight {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      /* Hill matrix display */
+      .matrix {
+        display: inline-grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        border: 2px solid var(--border);
+        border-radius: 6px;
+        padding: 8px;
+        margin-top: 8px;
+      }
+      .matrix-cell {
+        background: var(--bg2);
+        border-radius: 4px;
+        text-align: center;
+        padding: 8px 14px;
+        font-family: "Share Tech Mono", monospace;
+        font-size: 1rem;
+        color: var(--accent);
+      }
+
+      /* Cipher explanation tabs */
+      .cipher-desc {
+        display: none;
+      }
+      .cipher-desc.show {
+        display: block;
+      }
+
+      /* Enigma rotors visual */
+      .rotors {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+      .rotor {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 0.7rem;
+        flex: 1;
+        min-width: 120px;
+      }
+      .rotor-title {
+        font-family: "Rajdhani", sans-serif;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--accent2);
+        font-size: 0.65rem;
+        margin-bottom: 6px;
+      }
+      .rotor-seq {
+        font-family: "Share Tech Mono", monospace;
+        font-size: 0.65rem;
+        color: var(--text2);
+        word-break: break-all;
+        line-height: 1.6;
+      }
+
+      /* Step-by-step trace */
+      .trace {
+        max-height: 180px;
+        overflow-y: auto;
+        background: var(--bg);
+        border-radius: 6px;
+        padding: 10px;
+        font-family: "Share Tech Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--text2);
+        line-height: 2;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+      }
+      .trace:empty::before {
+        content: "Hasil trace akan tampil di sini...";
+        color: var(--text3);
+      }
+      .tr-in {
+        color: var(--text2);
+      }
+      .tr-op {
+        color: var(--warn);
+      }
+      .tr-out {
+        color: var(--accent3);
+      }
+
+      /* Animations */
+      @keyframes fadeDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: -200% center;
+        }
+        100% {
+          background-position: 200% center;
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 700px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .card.full {
+          grid-column: 1;
+        }
+        h1 {
+          font-size: 1.7rem;
+        }
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo">
+          <div class="logo-icon">🔐</div>
+          <h1>CIPHERLAB</h1>
+        </div>
+        <p class="subtitle">
+          Kalkulator Kriptografi Klasik — Enkripsi &amp; Dekripsi
+        </p>
+      </header>
+
+      <div class="layout">
+        <!-- INPUT -->
+        <div class="card">
+          <div class="card-title">
+            <div class="dot"></div>
+            Input &amp; Konfigurasi
+          </div>
+
+          <label>Teks</label>
+          <textarea id="text" placeholder="Masukkan teks di sini..."></textarea>
+
+          <label>Algoritma</label>
+          <select id="cipher" onchange="onCipherChange()">
+            <option value="vigenere">Vigenere Cipher</option>
+            <option value="affine">Affine Cipher</option>
+            <option value="playfair">Playfair Cipher</option>
+            <option value="hill">Hill Cipher (2×2)</option>
+            <option value="enigma">Enigma (sederhana)</option>
+          </select>
+
+          <label>Kunci</label>
+          <input
+            type="text"
+            id="key"
+            placeholder="Masukkan kunci..."
+            oninput="onKeyInput()"
+          />
+          <div class="key-hint" id="keyHint"></div>
+
+          <label>Mode</label>
+          <div class="mode-toggle">
+            <button
+              class="mode-btn active-enc"
+              id="btn-enc"
+              onclick="setMode('encrypt')"
+            >
+              ⬆ Enkripsi
+            </button>
+            <button class="mode-btn" id="btn-dec" onclick="setMode('decrypt')">
+              ⬇ Dekripsi
+            </button>
+          </div>
+
+          <div class="alert alert-err" id="alertErr"></div>
+          <button class="btn-process" onclick="process()">⚡ PROSES</button>
+
+          <div class="stats" id="stats">
+            <div class="stat">
+              <span class="stat-val" id="sIn">0</span
+              ><span class="stat-lbl">Input</span>
+            </div>
+            <div class="stat">
+              <span class="stat-val" id="sOut">0</span
+              ><span class="stat-lbl">Output</span>
+            </div>
+            <div class="stat">
+              <span class="stat-val" id="sKey">—</span
+              ><span class="stat-lbl">Key Len</span>
+            </div>
+            <div class="stat">
+              <span class="stat-val" id="sUniq">0</span
+              ><span class="stat-lbl">Unik</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- OUTPUT -->
+        <div class="card accent-green">
+          <div class="card-title" style="color: var(--accent3)">
+            <div class="dot" style="background: var(--accent3)"></div>
+            Hasil
+          </div>
+
+          <div class="result-box">
+            <textarea
+              id="result"
+              readonly
+              placeholder="Hasil akan muncul di sini..."
+            ></textarea>
+            <button class="copy-btn" onclick="copyResult()">📋 SALIN</button>
+          </div>
+
+          <label style="margin-bottom: 4px">Trace Langkah</label>
+          <div class="trace" id="trace"></div>
+        </div>
+
+        <!-- FREQUENCY ANALYSIS -->
+        <div class="card">
+          <div class="card-title">
+            <div class="dot"></div>
+            Analisis Frekuensi — Input
+          </div>
+          <div class="freq-bars" id="freqInput"></div>
+        </div>
+
+        <div class="card accent-green">
+          <div class="card-title" style="color: var(--accent3)">
+            <div class="dot" style="background: var(--accent3)"></div>
+            Analisis Frekuensi — Output
+          </div>
+          <div class="freq-bars" id="freqOutput"></div>
+        </div>
+
+        <!-- CIPHER INFO -->
+        <div class="card full accent-purple">
+          <div class="card-title" style="color: var(--accent2)">
+            <div class="dot" style="background: var(--accent2)"></div>
+            Detail Cipher &amp; Visualisasi Kunci
+          </div>
+          <div id="cipherDetail">Pilih cipher untuk melihat detail.</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* ========================================================
+   GLOBAL STATE
+   ======================================================== */
+      const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      let mode = "encrypt";
+
+      /* ========================================================
+   UI HELPERS
+   ======================================================== */
+      function setMode(m) {
+        mode = m;
+        document.getElementById("btn-enc").className =
+          "mode-btn" + (m === "encrypt" ? " active-enc" : "");
+        document.getElementById("btn-dec").className =
+          "mode-btn" + (m === "decrypt" ? " active-dec" : "");
+      }
+
+      function showErr(msg) {
+        const el = document.getElementById("alertErr");
+        el.textContent = "⚠ " + msg;
+        el.className = "alert alert-err show";
+      }
+      function clearErr() {
+        document.getElementById("alertErr").className = "alert alert-err";
+      }
+
+      function copyResult() {
+        const r = document.getElementById("result").value;
+        if (!r) return;
+        navigator.clipboard.writeText(r);
+        const btn = document.querySelector(".copy-btn");
+        btn.textContent = "✓ TERSALIN";
+        setTimeout(() => (btn.textContent = "📋 SALIN"), 1500);
+      }
+
+      function updateStats(inp, out, key) {
+        const clean = inp.toUpperCase().replace(/[^A-Z]/g, "");
+        document.getElementById("sIn").textContent = clean.length;
+        document.getElementById("sOut").textContent = out.replace(
+          /[^A-Z]/g,
+          "",
+        ).length;
+        document.getElementById("sKey").textContent = key ? key.length : "—";
+        document.getElementById("sUniq").textContent = new Set(clean).size;
+      }
+
+      /* ========================================================
+   FREQUENCY ANALYSIS
+   ======================================================== */
+      function freqAnalysis(text) {
+        const clean = text.toUpperCase().replace(/[^A-Z]/g, "");
+        const counts = {};
+        for (let c of alpha) counts[c] = 0;
+        for (let c of clean) counts[c]++;
+        return counts;
+      }
+
+      function renderFreq(containerId, text) {
+        const el = document.getElementById(containerId);
+        const counts = freqAnalysis(text);
+        const max = Math.max(...Object.values(counts), 1);
+        el.innerHTML = "";
+        for (let c of alpha) {
+          const pct = Math.round((counts[c] / max) * 100);
+          const wrap = document.createElement("div");
+          wrap.className = "freq-bar-wrap";
+          wrap.title = `${c}: ${counts[c]}`;
+          wrap.innerHTML = `
+      <div class="freq-bar" style="height:${pct}%"></div>
+      <div class="freq-lbl">${c}</div>`;
+          el.appendChild(wrap);
+        }
+      }
+
+      /* ========================================================
+   VIGENERE CIPHER
+   ======================================================== */
+      function vigenere(text, key, encrypt, traces) {
+        const clean = text.toUpperCase().replace(/[^A-Z]/g, "");
+        key = key.toUpperCase().replace(/[^A-Z]/g, "");
+        if (!key) throw "Kunci Vigenere tidak boleh kosong.";
+        let result = "";
+        for (let i = 0; i < clean.length; i++) {
+          const t = alpha.indexOf(clean[i]);
+          const k = alpha.indexOf(key[i % key.length]);
+          const v = encrypt ? (t + k) % 26 : (t - k + 26) % 26;
+          result += alpha[v];
+          if (traces && i < 20) {
+            const op = encrypt
+              ? `(${t}+${k})%26=${v}`
+              : `(${t}-${k}+26)%26=${v}`;
+            traces.push(
+              `<span class="tr-in">${clean[i]}</span> key:<span class="tr-op">${key[i % key.length]}</span> → <span class="tr-op">${op}</span> → <span class="tr-out">${alpha[v]}</span>`,
+            );
+          }
+        }
+        return result;
+      }
+
+      /* ========================================================
+   AFFINE CIPHER
+   ======================================================== */
+      const AFFINE_INV = {
+        1: 1,
+        3: 9,
+        5: 21,
+        7: 15,
+        9: 3,
+        11: 19,
+        15: 7,
+        17: 23,
+        19: 11,
+        21: 5,
+        23: 17,
+        25: 25,
+      };
+
+      function affine(text, a, b, encrypt, traces) {
+        const clean = text.toUpperCase().replace(/[^A-Z]/g, "");
+        if (!AFFINE_INV.hasOwnProperty(a))
+          throw `Nilai a=${a} tidak valid untuk Affine Cipher. Pilih: 1,3,5,7,9,11,15,17,19,21,23,25.`;
+        const a_inv = AFFINE_INV[a];
+        let result = "";
+        for (let i = 0; i < clean.length; i++) {
+          const x = alpha.indexOf(clean[i]);
+          let y;
+          if (encrypt) y = (a * x + b) % 26;
+          else y = (a_inv * (x - b + 26 * 26)) % 26;
+          result += alpha[y];
+          if (traces && i < 15) {
+            const op = encrypt
+              ? `(${a}×${x}+${b})%26=${y}`
+              : `${a_inv}×(${x}-${b})%26=${y}`;
+            traces.push(
+              `<span class="tr-in">${clean[i]}</span> → <span class="tr-op">${op}</span> → <span class="tr-out">${alpha[y]}</span>`,
+            );
+          }
+        }
+        return result;
+      }
+
+      function parseAffineKey(key) {
+        const parts = key.split(/[,\s]+/);
+        if (parts.length < 2) throw "Format kunci Affine: a,b (contoh: 5,8)";
+        const a = parseInt(parts[0]),
+          b = parseInt(parts[1]);
+        if (isNaN(a) || isNaN(b)) throw "Kunci Affine harus angka. Format: a,b";
+        return { a, b: ((b % 26) + 26) % 26 };
+      }
+
+      /* ========================================================
+   PLAYFAIR CIPHER
+   ======================================================== */
+      function buildPlayfairMatrix(key) {
+        key = key
+          .toUpperCase()
+          .replace(/J/g, "I")
+          .replace(/[^A-Z]/g, "");
+        let seen = {};
+        let sq = [];
+        for (let c of key + alpha) {
+          if (c === "J") continue;
+          if (!seen[c]) {
+            seen[c] = true;
+            sq.push(c);
+          }
+        }
+        return sq; // 25 chars, row-major 5×5
+      }
+
+      function playfairPos(sq, c) {
+        if (c === "J") c = "I";
+        const i = sq.indexOf(c);
+        return { r: Math.floor(i / 5), c: i % 5 };
+      }
+
+      function playfair(text, key, encrypt, traces) {
+        if (!key) throw "Kunci Playfair tidak boleh kosong.";
+        const sq = buildPlayfairMatrix(key);
+        text = text
+          .toUpperCase()
+          .replace(/J/g, "I")
+          .replace(/[^A-Z]/g, "");
+
+        // Prepare digrams
+        let prepared = "";
+        let i = 0;
+        while (i < text.length) {
+          prepared += text[i];
+          if (i + 1 < text.length) {
+            if (text[i] === text[i + 1]) {
+              prepared += "X";
+            } else {
+              prepared += text[i + 1];
+              i++;
+            }
+          }
+          i++;
+        }
+        if (prepared.length % 2) prepared += "X";
+
+        let result = "";
+        const dir = encrypt ? 1 : -1;
+        for (let d = 0; d < prepared.length; d += 2) {
+          const a = prepared[d],
+            b = prepared[d + 1];
+          const pa = playfairPos(sq, a),
+            pb = playfairPos(sq, b);
+          let ca, cb;
+          if (pa.r === pb.r) {
+            ca = sq[pa.r * 5 + ((pa.c + dir + 5) % 5)];
+            cb = sq[pb.r * 5 + ((pb.c + dir + 5) % 5)];
+            if (traces && d < 30)
+              traces.push(
+                `<span class="tr-in">${a}${b}</span> [baris sama] → <span class="tr-out">${ca}${cb}</span>`,
+              );
+          } else if (pa.c === pb.c) {
+            ca = sq[((pa.r + dir + 5) % 5) * 5 + pa.c];
+            cb = sq[((pb.r + dir + 5) % 5) * 5 + pb.c];
+            if (traces && d < 30)
+              traces.push(
+                `<span class="tr-in">${a}${b}</span> [kolom sama] → <span class="tr-out">${ca}${cb}</span>`,
+              );
+          } else {
+            ca = sq[pa.r * 5 + pb.c];
+            cb = sq[pb.r * 5 + pa.c];
+            if (traces && d < 30)
+              traces.push(
+                `<span class="tr-in">${a}${b}</span> [persegi panjang] → <span class="tr-out">${ca}${cb}</span>`,
+              );
+          }
+          result += ca + cb;
+        }
+        return result;
+      }
+
+      /* ========================================================
+   HILL CIPHER (2x2)
+   ======================================================== */
+      function det2(a, b, c, d) {
+        return (((a * d - b * c) % 26) + 26) % 26;
+      }
+      function modInv26(x) {
+        x = ((x % 26) + 26) % 26;
+        for (let i = 1; i < 26; i++) if ((x * i) % 26 === 1) return i;
+        return null;
+      }
+
+      function parseHillKey(key) {
+        const nums = key.split(/[,\s]+/).map(Number);
+        if (nums.length < 4 || nums.some(isNaN))
+          throw "Kunci Hill 2×2 harus 4 angka, contoh: 3,3,2,5";
+        return [nums[0] % 26, nums[1] % 26, nums[2] % 26, nums[3] % 26];
+      }
+
+      function hillInverse(m) {
+        const [a, b, c, d] = m;
+        const det = det2(a, b, c, d);
+        const detInv = modInv26(det);
+        if (detInv === null)
+          throw `Matriks Hill tidak invertible (det=${det} tidak punya invers mod 26).`;
+        return [
+          (detInv * d) % 26,
+          (detInv * (-b + 26 * 26)) % 26,
+          (detInv * (-c + 26 * 26)) % 26,
+          (detInv * a) % 26,
+        ];
+      }
+
+      function hill(text, key, encrypt, traces) {
+        const m = parseHillKey(key);
+        const km = encrypt ? m : hillInverse(m);
+        text = text.toUpperCase().replace(/[^A-Z]/g, "");
+        if (text.length % 2) text += "X";
+        let result = "";
+        for (let i = 0; i < text.length; i += 2) {
+          const x = alpha.indexOf(text[i]),
+            y = alpha.indexOf(text[i + 1]);
+          const r0 = (km[0] * x + km[1] * y) % 26;
+          const r1 = (km[2] * x + km[3] * y) % 26;
+          result += alpha[r0] + alpha[r1];
+          if (traces && i < 20) {
+            traces.push(
+              `<span class="tr-in">[${text[i]},${text[i + 1]}]=[${x},${y}]</span> × M → <span class="tr-out">[${r0},${r1}]=[${alpha[r0]},${alpha[r1]}]</span>`,
+            );
+          }
+        }
+        return result;
+      }
+
+      /* ========================================================
+   ENIGMA (simplified: 3 rotors + reflector + plugboard)
+   ======================================================== */
+      const ROTOR_I = "EKMFLGDQVZNTOWYHXUSPAIBRCJ";
+      const ROTOR_II = "AJDKSIRUXBLHWTMCQGZNPYFVOE";
+      const ROTOR_III = "BDFHJLCPRTXVZNYEIWGAKMUSQO";
+      const REFLECTOR = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
+
+      function enigmaEncipher(text, plugboard) {
+        // Build plugboard map
+        const pb = {};
+        for (let c of alpha) pb[c] = c;
+        for (let pair of plugboard.toUpperCase().match(/[A-Z]{2}/g) || []) {
+          pb[pair[0]] = pair[1];
+          pb[pair[1]] = pair[0];
+        }
+
+        // Rotor positions (start at 0)
+        let pos = [0, 0, 0];
+        const rotors = [ROTOR_I, ROTOR_II, ROTOR_III];
+        const notches = [16, 4, 21]; // Q, E, V
+
+        function stepRotors() {
+          if (pos[1] === notches[1]) {
+            pos[0] = (pos[0] + 1) % 26;
+            pos[1] = (pos[1] + 1) % 26;
+          }
+          if (pos[2] === notches[2]) pos[1] = (pos[1] + 1) % 26;
+          pos[2] = (pos[2] + 1) % 26;
+        }
+
+        function encChar(c, traces) {
+          stepRotors();
+          let x = alpha.indexOf(c);
+          // Plugboard in
+          let pc = pb[c];
+          x = alpha.indexOf(pc);
+          // Through rotors forward
+          for (let r = 2; r >= 0; r--) {
+            x = alpha.indexOf(rotors[r][(x + pos[r]) % 26]);
+            x = (x - pos[r] + 26) % 26;
+          }
+          // Reflector
+          x = alpha.indexOf(REFLECTOR[x]);
+          // Through rotors backward
+          for (let r = 0; r <= 2; r++) {
+            x =
+              (rotors[r].indexOf(alpha[(x + pos[r]) % 26]) - pos[r] + 26) % 26;
+          }
+          // Plugboard out
+          return pb[alpha[x]];
+        }
+
+        text = text.toUpperCase().replace(/[^A-Z]/g, "");
+        let result = "";
+        const trc = [];
+        for (let i = 0; i < text.length; i++) {
+          const out = encChar(text[i]);
+          result += out;
+          if (i < 15)
+            trc.push(
+              `<span class="tr-in">${text[i]}</span> rotors:[${pos.join(",")}] → <span class="tr-out">${out}</span>`,
+            );
+        }
+        return { result, traces: trc };
+      }
+
+      /* ========================================================
+   CAESAR BRUTE FORCE (bonus)
+   ======================================================== */
+      function bruteVigenere(text) {
+        // Try all 26 caesar shifts as a simple brute force
+        const clean = text.toUpperCase().replace(/[^A-Z]/g, "");
+        let lines = ["<b>Caesar Brute Force (kunci 1 huruf):</b>"];
+        for (let k = 0; k < 26; k++) {
+          const dec = vigenere(clean, alpha[k], false, null);
+          lines.push(
+            `<span class="tr-op">K=${alpha[k]} (${k})</span>: <span class="tr-out">${dec.substring(0, 30)}</span>`,
+          );
+        }
+        return lines.join("\n");
+      }
+
+      /* ========================================================
+   ON CIPHER CHANGE
+   ======================================================== */
+      function onCipherChange() {
+        const c = document.getElementById("cipher").value;
+        const hint = document.getElementById("keyHint");
+        const hints = {
+          vigenere: "Kunci: huruf alfabet (contoh: KUNCI)",
+          affine: "Kunci: a,b — a harus coprime dengan 26 (contoh: 5,8)",
+          playfair: "Kunci: kata/frasa alfabet (contoh: MONARCHY)",
+          hill: "Kunci: 4 angka untuk matriks 2×2 (contoh: 3,3,2,5)",
+          enigma: "Kunci: pasangan plugboard, contoh: AB CD EF (opsional)",
+        };
+        hint.textContent = hints[c];
+        hint.className = "key-hint show";
+        renderCipherDetail(c, "", []);
+      }
+
+      function onKeyInput() {
+        const c = document.getElementById("cipher").value;
+        const k = document.getElementById("key").value;
+        renderCipherDetail(c, k, []);
+      }
+
+      /* ========================================================
+   CIPHER DETAIL PANEL
+   ======================================================== */
+      function renderCipherDetail(cipher, key, matrix) {
+        const el = document.getElementById("cipherDetail");
+
+        if (cipher === "vigenere") {
+          const k = key.toUpperCase().replace(/[^A-Z]/g, "") || "KUNCI";
+          let cells = k
+            .split("")
+            .map(
+              (c) =>
+                `<div class="key-cell">${c}<br><small style="color:var(--text3)">${alpha.indexOf(c)}</small></div>`,
+            )
+            .join("");
+          el.innerHTML = `
+      <p style="color:var(--text2);font-size:0.85rem;margin-bottom:10px">
+        <strong style="color:var(--accent)">Vigenere Cipher</strong> — menggeser setiap huruf sesuai huruf kunci yang berulang.<br>
+        Enkripsi: <code style="color:var(--accent)">C = (P + K) mod 26</code> &nbsp;|&nbsp; Dekripsi: <code style="color:var(--accent)">P = (C - K + 26) mod 26</code>
+      </p>
+      <label style="margin:0">Kunci saat ini:</label>
+      <div class="key-display">${cells}</div>`;
+        } else if (cipher === "affine") {
+          let a = 5,
+            b = 8;
+          try {
+            ({ a, b } = parseAffineKey(key));
+          } catch (e) {}
+          const ainv = AFFINE_INV[a] || "?";
+          el.innerHTML = `
+      <p style="color:var(--text2);font-size:0.85rem;margin-bottom:10px">
+        <strong style="color:var(--accent)">Affine Cipher</strong> — transformasi linear pada setiap huruf.<br>
+        Enkripsi: <code style="color:var(--accent)">C = (${a}×P + ${b}) mod 26</code><br>
+        Dekripsi: <code style="color:var(--accent)">P = ${ainv}×(C - ${b}) mod 26</code>
+        &nbsp;(a⁻¹=${ainv})
+      </p>
+      <p style="color:var(--text3);font-size:0.78rem">Nilai a yang valid (coprime 26): 1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25</p>`;
+        } else if (cipher === "playfair") {
+          const k = key || "MONARCHY";
+          const sq = buildPlayfairMatrix(k);
+          let cells = sq
+            .map((c, i) => {
+              const isKey =
+                k
+                  .toUpperCase()
+                  .replace(/J/g, "I")
+                  .replace(/[^A-Z]/g, "")
+                  .replace(/(.)\1+/g, "$1")
+                  .split("")
+                  .includes(c) && i < k.length;
+              return `<div class="pf-cell ${isKey ? "highlight" : ""}">${c}</div>`;
+            })
+            .join("");
+          el.innerHTML = `
+      <p style="color:var(--text2);font-size:0.85rem;margin-bottom:8px">
+        <strong style="color:var(--accent)">Playfair Cipher</strong> — enkripsi digram (pasangan 2 huruf) menggunakan matriks 5×5.
+      </p>
+      <div class="pf-grid">${cells}</div>`;
+        } else if (cipher === "hill") {
+          let m = [3, 3, 2, 5];
+          let minv = null;
+          let invHtml = "";
+          try {
+            m = parseHillKey(key || "3,3,2,5");
+            minv = hillInverse(m);
+            invHtml = `<div class="matrix" style="margin-left:16px">
+        ${minv.map((v) => `<div class="matrix-cell" style="color:var(--accent3)">${v}</div>`).join("")}
+      </div>`;
+          } catch (e) {
+            invHtml = `<span style="color:var(--red);font-size:0.8rem">${e}</span>`;
+          }
+          el.innerHTML = `
+      <p style="color:var(--text2);font-size:0.85rem;margin-bottom:8px">
+        <strong style="color:var(--accent)">Hill Cipher 2×2</strong> — mengalikan vektor 2 huruf dengan matriks kunci mod 26.
+      </p>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:0.75rem;color:var(--text3);margin-bottom:4px">Matriks K</div>
+          <div class="matrix">${m.map((v) => `<div class="matrix-cell">${v}</div>`).join("")}</div>
+        </div>
+        <div style="font-family:Share Tech Mono;color:var(--text3);font-size:1.2rem">→</div>
+        <div>
+          <div style="font-size:0.75rem;color:var(--text3);margin-bottom:4px">K⁻¹ (dekripsi)</div>
+          ${invHtml}
+        </div>
+      </div>`;
+        } else if (cipher === "enigma") {
+          el.innerHTML = `
+      <p style="color:var(--text2);font-size:0.85rem;margin-bottom:8px">
+        <strong style="color:var(--accent)">Enigma (sederhana)</strong> — 3 rotor + reflektor + plugboard.
+        Enigma bersifat <em>resiprokal</em>: mengenkripsi pesan terenkripsi menghasilkan pesan asli.
+      </p>
+      <div class="rotors">
+        <div class="rotor"><div class="rotor-title">Rotor I</div><div class="rotor-seq">${ROTOR_I}</div></div>
+        <div class="rotor"><div class="rotor-title">Rotor II</div><div class="rotor-seq">${ROTOR_II}</div></div>
+        <div class="rotor"><div class="rotor-title">Rotor III</div><div class="rotor-seq">${ROTOR_III}</div></div>
+        <div class="rotor"><div class="rotor-title">Reflektor</div><div class="rotor-seq">${REFLECTOR}</div></div>
+      </div>
+      <p style="color:var(--text3);font-size:0.78rem;margin-top:8px">Plugboard (kunci): pasangan huruf, contoh: <code style="color:var(--accent)">AB CD EF</code></p>`;
+        }
+      }
+
+      /* ========================================================
+   MAIN PROCESS
+   ======================================================== */
+      function process() {
+        clearErr();
+        const text = document.getElementById("text").value;
+        const key = document.getElementById("key").value;
+        const cipher = document.getElementById("cipher").value;
+        const enc = mode === "encrypt";
+
+        const traces = [];
+        let output = "";
+
+        try {
+          if (!text.trim()) throw "Teks input tidak boleh kosong.";
+
+          switch (cipher) {
+            case "vigenere":
+              output = vigenere(text, key, enc, traces);
+              break;
+            case "affine": {
+              const { a, b } = parseAffineKey(key || "5,8");
+              output = affine(text, a, b, enc, traces);
+              break;
+            }
+            case "playfair":
+              output = playfair(text, key, enc, traces);
+              break;
+            case "hill":
+              output = hill(text, key || "3,3,2,5", enc, traces);
+              break;
+            case "enigma": {
+              // Enigma is reciprocal: encrypt = decrypt
+              const res = enigmaEncipher(text, key || "");
+              output = res.result;
+              traces.push(...res.traces);
+              break;
+            }
+          }
+
+          document.getElementById("result").value = output;
+
+          // Trace
+          const traceEl = document.getElementById("trace");
+          if (traces.length > 0) {
+            traceEl.innerHTML =
+              traces.slice(0, 20).join("\n") +
+              (traces.length >= 20
+                ? '\n<span style="color:var(--text3)">...dan seterusnya</span>'
+                : "");
+          } else {
+            traceEl.innerHTML = "";
+          }
+
+          // Update stats
+          updateStats(text, output, key);
+
+          // Frequency bars
+          renderFreq("freqInput", text);
+          renderFreq("freqOutput", output);
+
+          // Cipher detail
+          renderCipherDetail(cipher, key, []);
+        } catch (e) {
+          showErr(e.toString ? e.toString() : e);
+        }
+      }
+
+      /* ========================================================
+   INIT
+   ======================================================== */
+      window.onload = function () {
+        renderCipherDetail("vigenere", "", []);
+        renderFreq("freqInput", "");
+        renderFreq("freqOutput", "");
+      };
+    </script>
+  </body>
+</html>
